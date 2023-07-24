@@ -6,8 +6,8 @@ target 'MyVoice' do
   use_frameworks!
 
   # Pods for MyVoice
-  pod 'onnxruntime-training-c', :path => '/Users/onnxt/Documents/onnxruntime-training-c'
-  pod 'onnxruntime-training-objc', :path => '/Users/onnxt/Documents/onnxruntime-training-objc'
+  pod 'onnxruntime-training-c', '1.16.0-dev+20230721002.fa4712c'
+  pod 'onnxruntime-training-objc', '1.16.0-dev+20230721002.fa4712c'
 
   target 'MyVoiceTests' do
     inherit! :search_paths
