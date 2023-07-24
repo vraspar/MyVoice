@@ -2,15 +2,14 @@ import SwiftUI
 
 struct InferView: View {
     
-    enum InferState {
-        case user
-        case other
-        case notSet
+    enum InferResult {
+        case user, other, notSet
     }
+    
     private let audioRecorder = AudioRecorder()
     private let voiceIdentifier = try! VoiceIdentifier()
     @State private var readyToRecord: Bool = true
-    @State private var inferResult: InferState = InferState.notSet
+    @State private var inferResult: InferResult = InferResult.notSet
     @State private var probUser: Float = 0.0
     
     private func recordVoice() {
@@ -27,7 +26,7 @@ struct InferView: View {
             switch result {
             case .success(let (isMatch, confidence)):
                print("Your Voice with confidence: \(isMatch),  \(confidence)")
-                inferResult = isMatch ? .user : .notSet
+                inferResult = isMatch ? .user : .other
                 probUser = confidence
             case .failure(let error):
                 print("Error: \(error)")
@@ -47,26 +46,11 @@ struct InferView: View {
                     .frame(width: 100, height: 100)
                     .foregroundColor( readyToRecord ? .gray: .red)
                     .transition(.scale)
-                    .animation(.easeIn, value: 1)
+                    .animation(.easeInOut, value: 1)
             }
                 
-            if inferResult != .notSet {
-                Spacer()
-                ZStack (alignment: .center) {
-                    Image(systemName: inferResult == .user ? "person.crop.circle.fill.badge.checkmark": "person.crop.circle.fill.badge.xmark")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 100, height: 100)
-                        .foregroundColor(.green)
-                        .animation(.easeInOut, value: 0.5)
-                   
-                }
-                Text("Probability:  \(String(format: "%.2f", probUser))")
-                    .multilineTextAlignment(.center)
-                
-            }
             Spacer()
-                
+            
             Button(action: {
                     readyToRecord = false
                     recordVoice()
@@ -79,11 +63,30 @@ struct InferView: View {
                     .cornerRadius(10)
 
                 }.disabled(!readyToRecord)
+            
+            if  inferResult != .notSet {
+                Spacer()
+                ZStack (alignment: .center) {
+                    Image(systemName: inferResult == .user ? "person.crop.circle.fill.badge.checkmark": "person.crop.circle.fill.badge.xmark")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.green)
+                        .animation(.easeInOut, value: 2)
+                   
+                }
+                
+                Text("Probability of User :  \(String(format: "%.2f", probUser))%")
+                    .multilineTextAlignment(.center)
+                    .fontDesign(.monospaced)
+            }
+            
             Spacer()
             
         }
         .padding()
         .navigationTitle("Infer")
+        
     }
 }
 
