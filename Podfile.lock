@@ -1,0 +1,24 @@
+PODS:
+  - "onnxruntime-training-c (1.16.0-dev+20230713003.fe5e4ff)"
+  - "onnxruntime-training-objc (1.16.0-dev+20230713003.fe5e4ff)":
+    - "onnxruntime-training-objc/Core (= 1.16.0-dev+20230713003.fe5e4ff)"
+  - "onnxruntime-training-objc/Core (1.16.0-dev+20230713003.fe5e4ff)":
+    - "onnxruntime-training-c (= 1.16.0-dev+20230713003.fe5e4ff)"
+
+DEPENDENCIES:
+  - onnxruntime-training-c (from `/Users/onnxt/Documents/onnxruntime-training-c`)
+  - onnxruntime-training-objc (from `/Users/onnxt/Documents/onnxruntime-training-objc`)
+
+EXTERNAL SOURCES:
+  onnxruntime-training-c:
+    :path: "/Users/onnxt/Documents/onnxruntime-training-c"
+  onnxruntime-training-objc:
+    :path: "/Users/onnxt/Documents/onnxruntime-training-objc"
+
+SPEC CHECKSUMS:
+  onnxruntime-training-c: e6e8ac0d732da2592a78d92b4425ca3c9ad49870
+  onnxruntime-training-objc: 8fd0e880cce7e196331f6303b43dc6a231eb70cb
+
+PODFILE CHECKSUM: 229dc7f652f3edb3044179a2440f9ceb84f40cb4
+
+COCOAPODS: 1.12.1
