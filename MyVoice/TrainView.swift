@@ -9,35 +9,33 @@ import SwiftUI
 
 struct TrainView: View {
     
-    private let knumRecording = 5
+    private static let sentences = [
+        "The gentle rustling of leaves in the breeze creates a soothing melody in the tranquil forest.",
+        "With courage in their hearts and determination in their eyes, the brave explorers set forth on an epic quest.",
+        "In the warmth of each other's embrace, they found solace and a love that transcended all boundaries.",
+        "The rapid advancement of technology continues to reshape our world and the way we interact with it.",
+        "Amidst the eerie darkness, whispers of an enigmatic presence sent shivers down their spines.",
+        "Echoes of the past resonate through ancient ruins, telling tales of civilizations long gone.",
+        "Among the stars and galaxies, the vastness of the cosmos reminds us of our place in the universe.",
+        "Through laughter and tears, their unbreakable bond of friendship grew stronger with each passing day.",
+        "With skilled brushstrokes and vivid colors, the artist brought life to a canvas, telling a thousand stories.",
+        "In the face of adversity, they stood firm, displaying unwavering courage to overcome life's challenges.",
+        "The tantalizing aroma of freshly baked bread wafted through the air, enticing all nearby.",
+        "In the realm of dreams, possibilities are limitless, and the ordinary becomes extraordinary.",
+        "The harmonious symphony of instruments blended together, evoking emotions that words cannot express.",
+        "Through meticulous research and experimentation, scientists unravel the mysteries of the natural world.",
+        "Even in the darkest times, a glimmer of hope can ignite a flame that illuminates the path ahead."
+    ]
+    
+    private let knumRecording = 6
     private let audioRecorder = AudioRecorder()
-    private let trainer = try! Trainer()
+    private let trainer = try! Trainer(sampleAudioRecordings: sentences.count)
     
     @State private var currentSentenceIndex = 0
     @State private var readyToRecord: Bool = true
     @State private var isTrainingComplete = false
-    let sentences: [String] = [
-        "The sun sets in a blaze of fiery hues, casting its golden glow across the tranquil lake.",
-        "The aroma of freshly baked bread wafts through the air, making mouths water in anticipation.",
-        "The rhythmic sound of waves crashing against the shore creates a soothing melody for the soul.",
-        "In the depths of the forest, a curious fox cautiously explores its surroundings, its bright eyes full of wonder.",
-        "The laughter of children fills the playground as they swing high in the summer breeze.",
-        "The city skyline sparkles at night, with a tapestry of lights illuminating the bustling streets below.",
-        "With each stroke of the paintbrush, the artist breathes life into a blank canvas, creating a masterpiece.",
-        "The gentle raindrops pitter-patter on the windowpane, creating a peaceful ambiance indoors.",
-        "A lone wolf howls at the moon, its melancholic cry echoing through the wilderness.",
-        "The scent of wildflowers permeates the meadow, painting it in vibrant shades of pink, purple, and yellow.",
-        "The wind whispers secrets as it rustles through the leaves of ancient trees.",
-        "A flock of graceful birds soars across the sky, their wings spread wide in a synchronized dance.",
-        "The sound of crackling firewood brings warmth and comfort on a cold winter's night.",
-        "A shooting star streaks across the night sky, granting wishes to those who believe.",
-        "The sweet melody of a violin fills the concert hall, captivating the audience with its emotive notes.",
-        "A gentle breeze carries the delicate petals of cherry blossoms, creating a picturesque scene of beauty.",
-        "The aroma of coffee lingers in the air, enticing sleepy souls to wake up and embrace the day.",
-        "The majestic mountains stand tall, their peaks reaching towards the heavens in a display of grandeur.",
-        "The sound of distant thunder announces an approaching storm, as dark clouds gather in the sky.",
-        "The first rays of sunlight peek over the horizon, painting the world in shades of gold and orange."
-    ]
+    
+
     
     private func recordVoice() {
         audioRecorder.record { recordResult in
@@ -72,7 +70,7 @@ struct TrainView: View {
         VStack {
             if !isTrainingComplete {
                 Spacer()
-                Text(sentences[currentSentenceIndex])
+                Text(TrainView.sentences[currentSentenceIndex])
                     .font(.title)
                     .padding()
                     .multilineTextAlignment(.center)

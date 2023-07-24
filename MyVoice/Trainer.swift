@@ -7,13 +7,13 @@ class Trainer {
     private let trainingSession: ORTTrainingSession
     private let checkpoint: ORTCheckpoint
     private var recordingCounter: Int
-    private let kSampleAudioRecordings: Int = 20
+    private let sampleAudioRecordings: Int
     
     enum TrainerError: Error {
         case Error(_ message: String)
     }
     
-    init() throws {
+    init(sampleAudioRecordings : Int) throws {
         ortEnv = try ORTEnv(loggingLevel: ORTLoggingLevel.warning)
         
         // get path for artifacts
@@ -37,6 +37,7 @@ class Trainer {
         
         trainingSession = try ORTTrainingSession(env: ortEnv, sessionOptions: ORTSessionOptions(), checkpoint: checkpoint, trainModelPath: trainingModelPath, evalModelPath: evalModelPath, optimizerModelPath: optimizerPath)
         
+        self.sampleAudioRecordings = sampleAudioRecordings
         recordingCounter = 0
     }
 
@@ -52,10 +53,11 @@ class Trainer {
     
     func train(audio: Data)  -> Result<Float, Error> {
         return Result<Float, Error> { () -> Float in
-            let wavFileData = try getDataFromWavFile(fileName: "other_\(recordingCounter)")
-            var loss = try trainStep(inputData: wavFileData, label: 0)
-            loss = try trainStep(inputData: audio, label: 1)
-            recordingCounter = min(recordingCounter + 1, kSampleAudioRecordings - 1)
+            let (buffer, wavFileData) = try getDataFromWavFile(fileName: "other_\(recordingCounter)")
+            var loss = try trainStep(inputData: audio, label: 1)
+            loss = try trainStep(inputData: wavFileData, label: 0)
+            
+            recordingCounter = min(recordingCounter + 1, sampleAudioRecordings - 1)
             return loss
         }
     }
@@ -112,7 +114,7 @@ class Trainer {
         )
     }
 
-    private func getDataFromWavFile(fileName: String) throws -> Data {
+    private func getDataFromWavFile(fileName: String) throws -> (AVAudioBuffer, Data) {
         guard let fileUrl = Bundle.main.url(forResource: fileName, withExtension:"wav") else {
             throw TrainerError.Error("Failed to find wav file: \(fileName).")
         }
@@ -139,7 +141,7 @@ class Trainer {
             deallocator: .none
         )
         
-        return data
+        return (buffer, data)
     }
 }
 
