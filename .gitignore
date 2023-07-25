@@ -16,7 +16,7 @@ xcuserdata/
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 ### onnx models ###
-models/
+artifacts/
 
 ### Recordings ###
 recordings/
