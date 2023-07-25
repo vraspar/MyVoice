@@ -46,11 +46,11 @@ struct TrainView: View {
         }
     }
     
-    private func endRecord(_ result: Result<Float, Error>) {
+    private func endRecord(_ result: Result<Void, Error>) {
         DispatchQueue.main.async {
             switch result {
-            case .success(let loss):
-                print("The loss is \(loss)")
+            case .success:
+                print("Successfully completed Train Step ")
             case .failure(let error):
                 print("Error: \(error)")
             }

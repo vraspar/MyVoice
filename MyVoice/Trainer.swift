@@ -8,6 +8,7 @@ class Trainer {
     private let checkpoint: ORTCheckpoint
     private var recordingCounter: Int
     private let sampleAudioRecordings: Int
+    private let kEpoch: Int = 3
     
     enum TrainerError: Error {
         case Error(_ message: String)
@@ -51,66 +52,48 @@ class Trainer {
     }
     
     
-    func train(audio: Data)  -> Result<Float, Error> {
-        return Result<Float, Error> { () -> Float in
-            let (buffer, wavFileData) = try getDataFromWavFile(fileName: "other_\(recordingCounter)")
-            var loss = try trainStep(inputData: audio, label: 1)
-            loss = try trainStep(inputData: wavFileData, label: 0)
+    func train(audio: Data)  -> Result<Void, Error> {
+        return Result<Void, Error> { ()  in
+            for _ in 0..<kEpoch {
+                let (buffer, wavFileData) = try getDataFromWavFile(fileName: "other_\(recordingCounter)")
+                try trainStep(inputData: [audio, wavFileData], label: [1, 0])
+            }
             
             recordingCounter = min(recordingCounter + 1, sampleAudioRecordings - 1)
-            return loss
         }
     }
 
     
-    func trainStep(inputData: Data, label: Int64) throws -> Float  {
+    func trainStep(inputData: [Data], label: [Int64]) throws  {
         
-        let inputs = [try getORTValue(data: inputData), try getORTValue(intData: label)]
-        let outputs = try trainingSession.trainStep(withInputValues: inputs)
+        let inputs = [try getORTValue(dataList: inputData), try getORTValue(lables: label)]
+        try trainingSession.trainStep(withInputValues: inputs)
         
-
-//        if outputs.count != 1 {
-//            throw TrainerError.Error("Failed to perform training step: outputs are empty or outputData does not have correct shape")
-//        }
-//
-//        let outputData = try Data(outputs[1].tensorData())
-//
-//        // get Float value from outputData: NSMutableData
-//        var loss: Float = 0.0
-//
-//        outputData.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) in
-//            loss = bytes.load(as: Float.self)
-//        }
-        
-        
-//        let loss = outputData.withUnsafeBytes { (ptr: UnsafePointer<Float>) -> Float in
-//            return ptr.pointee
-//        }
-
         // update the model params
         try trainingSession.optimizerStep()
         
         // reset the gradients
         try trainingSession.lazyResetGrad()
-        
-        return 0
+
        
     }
     
-    private func getORTValue(data: Data) throws -> ORTValue {
-        let tensorData = NSMutableData(data: data)
-        let inputShape: [NSNumber] = [1, data.count / MemoryLayout<Float>.stride as NSNumber]
+    private func getORTValue(dataList: [Data]) throws -> ORTValue {
+        let tensorData = NSMutableData()
+        dataList.forEach {data in tensorData.append(data)}
+        let inputShape: [NSNumber] = [dataList.count as NSNumber, dataList[0].count / MemoryLayout<Float>.stride as NSNumber]
 
         return try ORTValue(
             tensorData: tensorData, elementType: ORTTensorElementDataType.float, shape: inputShape
         )
     }
 
-    private func getORTValue(intData: Int64) throws -> ORTValue {
-        let tensorData = NSMutableData(data: withUnsafeBytes(of: intData) {Data($0)})
+    private func getORTValue(lables: [Int64]) throws -> ORTValue {
+        let tensorData = NSMutableData(bytes: lables, length: lables.count * MemoryLayout<Int64>.stride)
+        let inputShape: [NSNumber] = [lables.count as NSNumber]
 
         return try ORTValue (
-            tensorData: tensorData, elementType: ORTTensorElementDataType.int64, shape: [1]
+            tensorData: tensorData, elementType: ORTTensorElementDataType.int64, shape: inputShape
         )
     }
 
