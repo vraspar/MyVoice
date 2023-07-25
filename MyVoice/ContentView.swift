@@ -21,7 +21,6 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                
                 HStack {
                     NavigationLink(destination: TrainView()) {
                         Text("Train")
@@ -47,7 +46,6 @@ struct ContentView: View {
                 Spacer()
             }
             .padding()
-            
         }
     }
 }

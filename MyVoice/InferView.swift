@@ -20,12 +20,12 @@ struct InferView: View {
             endRecord(recognizeResult)
         }
     }
-
+    
     private func endRecord(_ result: Result<(Bool, Float), Error>) {
         DispatchQueue.main.async {
             switch result {
             case .success(let (isMatch, confidence)):
-               print("Your Voice with confidence: \(isMatch),  \(confidence)")
+                print("Your Voice with confidence: \(isMatch),  \(confidence)")
                 inferResult = isMatch ? .user : .other
                 probUser = confidence
             case .failure(let error):
@@ -38,7 +38,7 @@ struct InferView: View {
     var body: some View {
         VStack {
             Spacer()
-
+            
             ZStack(alignment: .center) {
                 Image(systemName: "mic.fill")
                     .resizable()
@@ -48,12 +48,12 @@ struct InferView: View {
                     .transition(.scale)
                     .animation(.easeInOut, value: 1)
             }
-                
+            
             Spacer()
             
             Button(action: {
-                    readyToRecord = false
-                    recordVoice()
+                readyToRecord = false
+                recordVoice()
             }) {
                 Text(readyToRecord ? "Record" : "Recording ...")
                     .font(.title)
@@ -61,8 +61,8 @@ struct InferView: View {
                     .background(readyToRecord ? .green : .gray)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-
-                }.disabled(!readyToRecord)
+                
+            }.disabled(!readyToRecord)
             
             if  inferResult != .notSet {
                 Spacer()
@@ -73,7 +73,7 @@ struct InferView: View {
                         .frame(width: 100, height: 100)
                         .foregroundColor(.green)
                         .animation(.easeInOut, value: 2)
-                   
+                    
                 }
                 
                 Text("Probability of User :  \(String(format: "%.2f", probUser))%")
@@ -82,11 +82,9 @@ struct InferView: View {
             }
             
             Spacer()
-            
         }
         .padding()
         .navigationTitle("Infer")
-        
     }
 }
 
@@ -95,4 +93,3 @@ struct InferView_Previews: PreviewProvider {
         InferView()
     }
 }
-

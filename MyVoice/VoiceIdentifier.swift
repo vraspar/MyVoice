@@ -21,13 +21,13 @@ class VoiceIdentifier {
     
     private func isUser(logits: [Float]) -> Float {
         // apply softMax
-        let maxInput = logits.max() ?? 0.0 // Find the maximum value in the input array to avoid overflow issues
+        let maxInput = logits.max() ?? 0.0
         let expValues = logits.map { exp($0 - maxInput) } // Calculate e^(x - maxInput) for each element
         let expSum = expValues.reduce(0, +) // Sum of all e^(x - maxInput) values
-          
+        
         return expValues.map { $0 / expSum }[1] // Calculate the softmax probabilities
-      }
-
+    }
+    
     func evaluate(inputData: Data) -> Result<(Bool, Float), Error> {
         
         return Result<(Bool, Float), Error> { () -> (Bool, Float) in

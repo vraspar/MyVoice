@@ -1,10 +1,3 @@
-//
-//  TrainView.swift
-//  MyVoice
-//
-//  Created by onnx training on 7/19/23.
-//
-
 import SwiftUI
 
 struct TrainView: View {
@@ -35,8 +28,6 @@ struct TrainView: View {
     @State private var readyToRecord: Bool = true
     @State private var isTrainingComplete = false
     
-
-    
     private func recordVoice() {
         audioRecorder.record { recordResult in
             let recognizeResult = recordResult.flatMap { recordingBufferAndData in
@@ -65,7 +56,7 @@ struct TrainView: View {
             }
         }
     }
-
+    
     var body: some View {
         VStack {
             if !isTrainingComplete {
@@ -78,7 +69,6 @@ struct TrainView: View {
                 
                 Spacer()
                 
-                
                 ZStack(alignment: .center) {
                     Image(systemName: "mic.fill")
                         .resizable()
@@ -88,7 +78,6 @@ struct TrainView: View {
                         .transition(.scale)
                         .animation(.easeIn, value: 1)
                 }
-                
                 
                 Spacer()
                 
@@ -102,7 +91,6 @@ struct TrainView: View {
                         .background(readyToRecord ? .green : .gray)
                         .foregroundColor(.white)
                         .cornerRadius(10)
-
                 }.disabled(!readyToRecord)
                 
             } else {
@@ -123,21 +111,12 @@ struct TrainView: View {
                         .cornerRadius(10)
                 }
                 .padding(.leading, 20)
-
             }
             
             Spacer()
         }
         .padding()
         .navigationTitle("Train")
-    }
-    
-    func startRecording() {
-        
-    }
-    
-    func stopRecording() {
-        
     }
 }
 

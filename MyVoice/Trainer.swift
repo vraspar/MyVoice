@@ -41,7 +41,6 @@ class Trainer {
         self.sampleAudioRecordings = sampleAudioRecordings
         recordingCounter = 0
     }
-
     
     func exportModelForInference() throws {
         guard let modelsDirUrl = Bundle.main.url(forResource: "models", withExtension: nil) else {
@@ -50,7 +49,6 @@ class Trainer {
         let modelPath = modelsDirUrl.appendingPathComponent("inference_model.onnx").path
         try trainingSession.exportModelForInference(withOutputPath: modelPath, graphOutputNames: ["output"])
     }
-    
     
     func train(audio: Data)  -> Result<Void, Error> {
         return Result<Void, Error> { ()  in
@@ -62,7 +60,6 @@ class Trainer {
             recordingCounter = min(recordingCounter + 1, sampleAudioRecordings - 1)
         }
     }
-
     
     func trainStep(inputData: [Data], label: [Int64]) throws  {
         
@@ -74,29 +71,27 @@ class Trainer {
         
         // reset the gradients
         try trainingSession.lazyResetGrad()
-
-       
     }
     
     private func getORTValue(dataList: [Data]) throws -> ORTValue {
         let tensorData = NSMutableData()
         dataList.forEach {data in tensorData.append(data)}
         let inputShape: [NSNumber] = [dataList.count as NSNumber, dataList[0].count / MemoryLayout<Float>.stride as NSNumber]
-
+        
         return try ORTValue(
             tensorData: tensorData, elementType: ORTTensorElementDataType.float, shape: inputShape
         )
     }
-
+    
     private func getORTValue(lables: [Int64]) throws -> ORTValue {
         let tensorData = NSMutableData(bytes: lables, length: lables.count * MemoryLayout<Int64>.stride)
         let inputShape: [NSNumber] = [lables.count as NSNumber]
-
+        
         return try ORTValue (
             tensorData: tensorData, elementType: ORTTensorElementDataType.int64, shape: inputShape
         )
     }
-
+    
     private func getDataFromWavFile(fileName: String) throws -> (AVAudioBuffer, Data) {
         guard let fileUrl = Bundle.main.url(forResource: fileName, withExtension:"wav") else {
             throw TrainerError.Error("Failed to find wav file: \(fileName).")
